@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-dotenv.config(); // ensure env is loaded first
+dotenv.config(); 
 
 import express from "express";
 import { connectDB } from "./dbConfig.js";
@@ -32,10 +32,10 @@ app.get("/users", async (req, res) => {
   try {
     db = await connectDB(); // connect once at startup
     app.listen(PORT, () => {
-      console.log(`🚀 Server running on http://localhost:${PORT}`);
+      console.log(`Server running on http://localhost:${PORT}`);
     });
   } catch (err) {
-    console.error("❌ Failed to start server:", err);
+    console.error("Failed to start server:", err);
     process.exit(1);
   }
 })();
