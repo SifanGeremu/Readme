@@ -1,6 +1,5 @@
-import dotenv from "dotenv";
-dotenv.config(); 
-
+import "./config/env.js";
+import AuthRoutes from "./routes/auth.route.js";
 import express from "express";
 import { connectDB } from "./dbConfig.js";
 
@@ -10,11 +9,12 @@ const PORT = process.env.PORT || 3000;
 let db; // cached DB instance
 
 app.use(express.json());
+app.use(AuthRoutes);
 
 // Routes
-app.get("/", (req, res) => {
-  res.send("Hello World");
-});
+app.get("/ping", (req, res) => res.json({ status: "ok" }));
+
+
 
 app.get("/users", async (req, res) => {
   try {
