@@ -1,18 +1,30 @@
 import { betterAuth } from "better-auth";
+import { connectDB } from "../dbConfig.js";
 
 const BASE_URL = process.env.BETTER_AUTH_BASE_URL;
 
-if (!BASE_URL || !BASE_URL.startsWith("http")) {
-  throw new Error("BETTER_AUTH_BASE_URL is missing or invalid");
+export async function initBetterAuth() {
+  const db = await connectDB();
+
+  return betterAuth({
+    baseURL: BASE_URL,
+    secret: process.env.BETTER_AUTH_SECRET,
+    trustedOrigins: [BASE_URL],
+
+    socialProviders: {
+      github: {
+        clientId: process.env.GITHUB_CLIENT_ID,
+        clientSecret: process.env.GITHUB_CLIENT_SECRET,
+        scopes: ["user:email", "public_repo"], 
+      },
+    },
+
+    adapter: {
+      mongoClient: db.client, 
+    },
+
+    debug: true,
+  });
 }
 
-export const auth = betterAuth({
-  baseURL: BASE_URL,
-  trustedOrigins: [BASE_URL],
-  socialProviders: {
-    github: {
-      clientId: process.env.GITHUB_CLIENT_ID,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    },
-  },
-});
+export default { initBetterAuth };

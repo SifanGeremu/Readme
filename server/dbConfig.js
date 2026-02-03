@@ -1,13 +1,11 @@
-
-
+// dbConfig.js
 import { MongoClient, ServerApiVersion } from "mongodb";
 
 const uri = process.env.ATLAS_URI;
 const dbName = process.env.DB_NAME;
 
-// Fail fast if env is missing
-if (!uri) throw new Error("ATLAS_URI is not defined in .env file");
-if (!dbName) throw new Error("DB_NAME is not defined in .env file");
+if (!uri) throw new Error("ATLAS_URI is missing in .env");
+if (!dbName) throw new Error("DB_NAME is missing in .env");
 
 const client = new MongoClient(uri, {
   serverApi: {
@@ -17,18 +15,14 @@ const client = new MongoClient(uri, {
   },
 });
 
-let db; // cached DB instance
+let connected = false;
 
 export async function connectDB() {
-  if (db) return db; // return cached instance
-
-  try {
+  if (!connected) {
     await client.connect();
+    connected = true;
     console.log("Connected to MongoDB Atlas");
-    db = client.db(dbName);
-    return db;
-  } catch (err) {
-    console.error("MongoDB connection error:", err);
-    process.exit(1);
   }
+
+  return client; // 👈 IMPORTANT: return MongoClient
 }
