@@ -5,7 +5,7 @@ import session from "express-session";
 import passport from "./auth/passport.js";
 import { connectDB } from "./config/dbConfig.js";
 import authRoutes from "./routes/auth.routes.js";
-
+import { authMiddleware } from "./middleware/authMiddleware.js";
 const app = express();
 
 // Middleware
@@ -40,15 +40,7 @@ app.use("/", authRoutes);
 app.get("/ping", (req, res) => res.json({ status: "ok" }));
 
 // Protected route
-app.get("/dashboard", (req, res) => {
-  if (!req.isAuthenticated())
-    return res.status(401).json({ error: "Not logged in" });
-
-  res.json({
-    message: "Logged in",
-    user: req.user,
-  });
-});
+app.get("/dashboard", authMiddleware);
 
 const port = process.env.PORT || 5500;
 app.listen(port, () =>
